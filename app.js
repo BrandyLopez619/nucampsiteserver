@@ -2,7 +2,11 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+
 var logger = require('morgan');
+const session = require('express-session');
+const FileStore = require('sessions-file-store')(session);
+// above uses two sets of parameters because its a 'FirstClassFn' which means it can return another function. When we envoke 'sessions-file-store', it returns the 'session' fn as its return value. 
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -24,7 +28,6 @@ connect.then(() => console.log('Connected correctly to server'),
     err => console.log(err)
 );
 
-
 var app = express();
 
 // view engine setup
@@ -34,7 +37,55 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+//app.use(cookieParser('12345-67890-09876-54321')); // commented out to prevent issues with cookie parser and express cookies
+
+app.use(session({
+    name: 'session-id',
+    secret: '12345-67890-09876-54321',
+    saveUninitialized: false, //when a session is begun but no further data is given , the data is 'useless' therfore dropped to prevent having a bunch of empty session files and cookies. 
+    resave: false,
+    store: new FileStore() // this sets up files to be store in the application file store, not just application memory.  
+}))
+// auth Logs and inspects request header, if not authenticated it responds with an authentication form and returns an error message.
+
+// If an authorization header is provided, it will parse the authorization header and validate the username and password by decoding its Base-64 value. It then takes that info and stores it as an object in an array auth. 
+
+
+function auth(req, res, next) {
+    console.log(req.session);
+    if (!req.session.user) {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            const err = new Error('You are not authenticated!');
+            res.setHeader('WWW-Authenticate', 'Basic');
+            err.status = 401;
+            return next(err);
+        }
+
+        const auth = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+        const user = auth[0];
+        const pass = auth[1];
+        if (user === 'admin' && pass === 'password') {
+            req.session.user = 'admin';
+            return next(); // authorized
+        } else {
+            const err = new Error('You are not authenticated!');
+            res.setHeader('WWW-Authenticate', 'Basic');
+            err.status = 401;
+            return next(err);
+        }
+    } else {
+        if (req.session.user === 'admin') {
+            return next();
+        } else {
+            const err = new Error('You are not authenticated!');
+            err.status = 401;
+            return next(err);
+        }
+    }
+}
+app.use(auth);
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
