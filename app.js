@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 
 var logger = require('morgan');
 const session = require('express-session');
-const FileStore = require('sessions-file-store')(session);
+const FileStore = require('session-file-store')(session);
 // above uses two sets of parameters because its a 'FirstClassFn' which means it can return another function. When we envoke 'sessions-file-store', it returns the 'session' fn as its return value. 
 
 var indexRouter = require('./routes/index');
