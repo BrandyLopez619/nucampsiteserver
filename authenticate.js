@@ -40,5 +40,18 @@ exports.jwtPassport = passport.use(
         }
     )
 );
-//verifies if request if from authenticated use using 'jwt' strategy not using sessions. This verifyUser export can now be used as a fucntional shorthand for authenticating a User with these methods and spare us having to type it every time.
+
 exports.verifyUser = passport.authenticate('jwt', { session: false });
+
+exports.verifyAdmin = function (req, res, next) {
+    if (req.user.admin === true) {
+        return next();
+    } else {
+        const err = new Error('You are not authorized to perform this operation');
+        err.status = 403;
+        return next(err);
+    }
+};
+
+//verifies if request if from authenticated use using 'jwt' strategy not using sessions. This verifyUser export can now be used as a fucntional shorthand for authenticating a User with these methods and spare us having to type it every time.
+
