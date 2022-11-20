@@ -3,6 +3,7 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+<<<<<<< HEAD
     firstname: {
         type: String,
         default: ''
@@ -11,6 +12,8 @@ const userSchema = new Schema({
         type: String,
         default: ''
     },
+=======
+>>>>>>> parent of 0a3eba7 (Mongoose Population)
     admin: {
         type: Boolean,
         default: false
