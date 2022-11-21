@@ -7,8 +7,8 @@ var logger = require('morgan');
 const authenticate = require('./authenticate');
 // above uses two sets of parameters because its a 'FirstClassFn' which means it can return another function. When we envoke 'sessions-file-store', it returns the 'session' fn as its return value. 
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 const campsiteRouter = require('./routes/campsiteRouter');
 const partnerRouter = require('./routes/partnerRouter');
 const promotionRouter = require('./routes/promotionRouter');
@@ -46,9 +46,6 @@ app.use(passport.initialize());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 

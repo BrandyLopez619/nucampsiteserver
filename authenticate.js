@@ -13,7 +13,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 exports.getToken = function (user) {
-    return jwt.sign(user, config.secretKey, { expiresIn: 3600 }); // 1hr
+    return jwt.sign(user, config.secretKey, { expiresIn: 60000 }); // 1hr
 };
 
 // configure JSON web strategy for Passport
@@ -52,6 +52,7 @@ exports.verifyAdmin = function (req, res, next) {
         return next(err);
     }
 };
+
 
 //verifies if request if from authenticated use using 'jwt' strategy not using sessions. This verifyUser export can now be used as a fucntional shorthand for authenticating a User with these methods and spare us having to type it every time.
 
