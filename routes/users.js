@@ -7,7 +7,6 @@ const authenticate = require('../authenticate');
 const cors = require('./cors');
 
 router.get('/', cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-
     User.find()
         .populate()
         .then(users => {
@@ -17,11 +16,6 @@ router.get('/', cors.corsWithOptions, authenticate.verifyUser, authenticate.veri
         })
         .catch(err => next(err));
 })
-/* GET users listing. */
-// router.get('/', function (req, res, next) {
-//     res.send('respond with a resource');
-// });
-
 router.post('/signup', cors.corsWithOptions, (req, res) => {
     User.register(
         new User({ username: req.body.username }),

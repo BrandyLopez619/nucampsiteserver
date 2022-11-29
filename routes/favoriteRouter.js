@@ -9,38 +9,17 @@ const favoriteRouter = express.Router();
 
 favoriteRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-    // .get(cors.cors, (req, res, next) => {
-    //     const fav =  Favorite.find({ user: req.user._id });
-    //     console.log(fav);
-    //     if (userFav) {
-    //         userFav.getFilter();
-    //         userFav.populate('favorites.user', 'favorites.campsite')
-    //             .then(favorites => {
-    //                 res.statusCode = 200;
-    //                 res.setHeader('Content-Type', 'application/json');
-    //                 res.json(favorites);
-    //             })
-    //             .catch(err => next(err));
-    //     }
-    // })
-
-    .get(cors.cors, async (req, res) => {
-        try {
-            const favorite = await Favorite.find({ user: req.user._id })
-                .populate('favorites.user', 'favorites.campsite');
-            if (!favorite) {
-                res.statusCode = 400;
+    .get(cors.cors, (req, res, next) => {
+        Favorite.find({ user: req.user._id })
+            .populate('favorites.user', 'favorites.campsite')
+            .then(favorites => {
+                res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                res.json("no favorites here!")
-            }
-            res.json(favorite);
-        }
-        catch (err) {
-            console.error(err.message);
-            res.status(500).send('Server Error')
-
-        }
-    })
+                res.json(favorites);
+            })
+            .catch(err => next(err));
+    }
+    )
     .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Favorite.findOne({ user: req.user._id })
             .then(favorites => {
