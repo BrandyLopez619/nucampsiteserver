@@ -4,6 +4,8 @@ const Campsite = require('../models/campsite');
 const authenticate = require('../authenticate');
 const campsiteRouter = express.Router();
 const cors = require('./cors');
+const { populate } = require('mongoose/lib/model');
+const user = require('../models/user');
 // './' required to import cors file not module
 
 campsiteRouter.route('/')
@@ -18,7 +20,7 @@ campsiteRouter.route('/')
             })
             .catch(err => next(err));
     })
-    .post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Campsite.create(req.body)
             .then(campsite => {
                 console.log('Campsite Created ', campsite);
@@ -28,11 +30,11 @@ campsiteRouter.route('/')
             })
             .catch(err => next(err));
     })
-    .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
+    .put(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /campsites');
     })
-    .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Campsite.deleteMany()
             .then(response => {
                 res.statusCode = 200;

@@ -43,6 +43,7 @@ exports.jwtPassport = passport.use(
     )
 );
 
+
 exports.verifyUser = passport.authenticate('jwt', { session: false });
 
 exports.verifyAdmin = function (req, res, next) {
@@ -54,7 +55,6 @@ exports.verifyAdmin = function (req, res, next) {
         return next(err);
     }
 };
-
 
 //verifies if request if from authenticated use using 'jwt' strategy not using sessions. This verifyUser export can now be used as a fucntional shorthand for authenticating a User with these methods and spare us having to type it every time.
 
