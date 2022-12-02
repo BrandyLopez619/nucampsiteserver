@@ -6,7 +6,6 @@ const campsiteRouter = express.Router();
 const cors = require('./cors');
 const { populate } = require('mongoose/lib/model');
 const user = require('../models/user');
-// './' required to import cors file not module
 
 campsiteRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
